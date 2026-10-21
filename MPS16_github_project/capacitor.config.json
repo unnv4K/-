@@ -1,6 +1,0 @@
-{
-  "appId": "com.mps16.sampler",
-  "appName": "MPS-16",
-  "webDir": "www",
-  "android": { "allowMixedContent": false }
-}
