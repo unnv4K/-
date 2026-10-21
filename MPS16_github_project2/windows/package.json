@@ -1,0 +1,19 @@
+{
+  "name": "mps16-sampler",
+  "version": "1.1.0",
+  "description": "MPS-16 sampler for Windows",
+  "author": "MPS-16",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.mps16.sampler",
+    "productName": "MPS-16",
+    "artifactName": "MPS-16.exe",
+    "files": ["main.js", "www/**/*"],
+    "directories": { "output": "dist" },
+    "win": { "target": "portable" }
+  }
+}
