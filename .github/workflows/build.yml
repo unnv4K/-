@@ -1,16 +1,11 @@
-name: Build APK
-on:
-  push:
-    branches: [main, master]
-  workflow_dispatch:
+name: Build
+on: [push, workflow_dispatch]
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: MPS16_github_project
     steps:
       - uses: actions/checkout@v4
+      - run: unzip -q mps16-sampler.zip -d proj
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -18,14 +13,35 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: npm install
-      - run: npx cap add android
-      - run: npx cap sync android
       - run: |
+          cd proj
+          npm init -y
+          npm i @capacitor/core@6 @capacitor/cli@6 @capacitor/android@6
+          npx cap add android
+          npx cap sync android
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: MPS-16-apk
-          path: MPS16_github_project/android/app/build/outputs/apk/debug/app-debug.apk
+          name: MPS-16-android
+          path: proj/android/app/build/outputs/apk/debug/*.apk
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: Expand-Archive mps16-sampler.zip -DestinationPath proj
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: |
+          Copy-Item proj/www proj/windows/www -Recurse
+          cd proj/windows
+          npm install
+          npx electron-builder --win portable
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MPS-16-windows
+          path: proj/windows/dist/MPS-16.exe
